@@ -3,44 +3,6 @@
 
 #include "touch_scroll_physics.h"
 
-#define INPUT_DELTA_MAX_HISTORY 3
-
-struct TouchScroller
-{
-    int totalCells;
-    float viewSize;
-    float cellSize;
-    float gutterSize;
-    bool dipToClosestCell;
-    
-    float value;
-    float momentum;
-
-    float lastInput;
-    bool interacting;
-    
-    float inputDelta;
-    int inputDeltaIndex;
-    float inputDeltas[INPUT_DELTA_MAX_HISTORY];
-
-    // private
-    float fullSize;
-    float dipMaxSpeed;
-    float dipSnappiness;
-    float cellSizeHalf;
-    float max;
-    float maxGutter;
-    float delta;
-};
-
-static void UpdateSize(struct TouchScroller* ts)
-{
-    ts->cellSizeHalf = ts->cellSize * 0.5;
-    ts->fullSize = fmax(ts->viewSize, ts->cellSize * ts->totalCells);
-    ts->max = ts->fullSize - ts->viewSize;
-    ts->maxGutter = ts->max + ts->gutterSize;
-}
-
 static float Clamp(float a, float min, float max)
 {
     if (a < min) {
@@ -52,33 +14,16 @@ static float Clamp(float a, float min, float max)
     return a;
 }
 
-struct TouchScroller* TouchScroller_Init(const struct TouchScrollerConfig opt)
+void TouchScroller_Update(TouchScroller* ts, float dt)
 {
-    struct TouchScroller* ts = calloc(1, sizeof(struct TouchScroller));
-    if (ts) {
-        ts->totalCells = opt.totalCells;
-        ts->viewSize = opt.viewSize;
-        ts->cellSize = opt.cellSize;
-        ts->gutterSize = opt.gutterSize;
-        ts->dipToClosestCell = opt.dipToClosestCell;
-        ts->dipMaxSpeed = 10;
-        ts->dipSnappiness = 0.1f;
-        UpdateSize(ts);
-    }
-    return ts;
-}
+    // precalculate some values
+    float fullSize = (float)fmax(ts->viewSize, ts->cellSize * ts->totalCells);
+    float max = fullSize - ts->viewSize;
+    float cellSizeHalf = ts->cellSize * 0.5f;
+    float maxGutter = max + ts->gutterSize;
 
-void TouchScroller_Destroy(struct TouchScroller* ts)
-{
-    if (ts) {
-        free(ts);
-    }
-}
-
-void TouchScroller_Update(struct TouchScroller* ts, float dt)
-{
     bool isBefore = ts->value < 0;
-    bool isAfter = ts->value > ts->max;
+    bool isAfter = ts->value > max;
     bool isInside = !isBefore && !isAfter;
 
     // ease input at edges
@@ -90,34 +35,32 @@ void TouchScroller_Update(struct TouchScroller* ts, float dt)
     } else if(isAfter) {
         ts->momentum = 0;
         if (ts->inputDelta < 0) {
-            ts->inputDelta *= (ts->maxGutter - ts->value) / ts->gutterSize;
+            ts->inputDelta *= (maxGutter - ts->value) / ts->gutterSize;
         }
     }
 
-    bool dipping = !ts->interacting;
-    
-    ts->value -= ts->cellSizeHalf;
+    ts->value -= cellSizeHalf;
     float dip = 0;
-    if (dipping) {
+    if (!ts->interacting) {
         if (isInside && ts->dipToClosestCell) {
-            dip = fmod((fmod(ts->value, ts->cellSize) + ts->cellSize), ts->cellSize) - ts->cellSizeHalf; 
+            dip = (float)(fmod((fmod(ts->value, ts->cellSize) + ts->cellSize), ts->cellSize)) - cellSizeHalf; 
         } else if(isBefore) {
-            dip = ts->value + ts->cellSizeHalf;
+            dip = ts->value + cellSizeHalf;
         } else if(isAfter) {
-            dip = ts->value - ts->max + ts->cellSizeHalf;
+            dip = ts->value - max + cellSizeHalf;
         }
-        float dipStrength = (1.f-Clamp(fabs(ts->momentum) / ts->dipMaxSpeed, 0.f, 1.f)) * ts->dipSnappiness;
+        float dipStrength = (1.f-Clamp((float)(fabs(ts->momentum)) / ts->dipMaxSpeed, 0.f, 1.f)) * ts->dipSnappiness;
         dip *= dipStrength;
     }
     
     ts->value -= ts->inputDelta;
     ts->inputDelta = 0;
     ts->value -= ts->momentum;
-    ts->momentum *= 0.9;
+    ts->momentum *= 0.9f;
     ts->value -= dip;
     
-    ts->value += ts->cellSizeHalf;
-    ts->value = Clamp(ts->value, -ts->gutterSize, ts->maxGutter);
+    ts->value += cellSizeHalf;
+    ts->value = Clamp(ts->value, -ts->gutterSize, maxGutter);
 }
 
 void TouchScroller_Start(struct TouchScroller* ts, float value)

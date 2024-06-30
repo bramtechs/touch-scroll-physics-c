@@ -3,37 +3,45 @@
 
 #ifdef __cplusplus
 extern "C" {
+#else
+#include <stdbool.h>    
 #endif
 
-struct TouchScrollerConfig;
-struct TouchScroller;
-
-#ifdef TSCROLL_USE_TYPEDEFS
-typedef struct TouchScrollerConfig TouchScrollerConfig;
-typedef struct TouchScroller TouchScroller;
-#endif
-
-#include <stdbool.h>
-
-struct TouchScrollerConfig
+#define INPUT_DELTA_MAX_HISTORY 3
+    
+typedef struct TouchScroller
 {
+    // --- configuration ---
     int totalCells;
     float viewSize;
     float cellSize;
     float gutterSize;
     bool dipToClosestCell;
-};
+    float dipMaxSpeed;             // recommended: 10.f
+    float dipSnappiness;           // recommended: 0.1f
+    // ---------------------
 
-struct TouchScroller* TouchScroller_Init(const struct TouchScrollerConfig);
-void TouchScroller_Destroy(struct TouchScroller*);
+    // --- result ---
+    float value;
+    // --------------
+    
+    // private
+    float momentum;
+    float lastInput;
+    bool interacting;
+    float inputDelta;
+    int inputDeltaIndex;
+    float inputDeltas[INPUT_DELTA_MAX_HISTORY];
+    float delta;
+} TouchScroller;
 
-void TouchScroller_Update(struct TouchScroller*, float dtInMillis);
+void TouchScroller_Update(TouchScroller*, float dtInMillis);
 
-void TouchScroller_Start(struct TouchScroller*, float xOrYPos);
-void TouchScroller_Move(struct TouchScroller*, float xOrYPos);
-void TouchScroller_End(struct TouchScroller*, float xOrYPos);
+void TouchScroller_Start(TouchScroller*, float xOrYPos);
+void TouchScroller_Move(TouchScroller*, float xOrYPos);
+void TouchScroller_End(TouchScroller*, float xOrYPos);
 
-float TouchScroller_GetValue(struct TouchScroller*);
+float TouchScroller_GetValue(TouchScroller*);
 
 #endif
 

@@ -26,7 +26,5 @@ if (DEFINED TSCROLL_BUILD_DEMOS)
     FetchContent_MakeAvailable(raylib)
   endif()
   
-  add_subdirectory(demo-c)
-  add_subdirectory(demo-cpp)
-
+  add_subdirectory(demo)
 endif()

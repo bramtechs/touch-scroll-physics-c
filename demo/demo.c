@@ -7,13 +7,13 @@
 static float ProcessTouchScrollerX(TouchScroller* scroller, int mButton)
 {
     if (IsMouseButtonPressed(mButton)) {
-        TouchScroller_Start(scroller, GetMouseX());
+        TouchScroller_Start(scroller, (float)GetMouseX());
     }
     else if (IsMouseButtonReleased(mButton)) {
-        TouchScroller_End(scroller, GetMouseX());
+        TouchScroller_End(scroller, (float)GetMouseX());
     }
     else if (IsMouseButtonDown(mButton)) {
-        TouchScroller_Move(scroller, GetMouseX());
+        TouchScroller_Move(scroller, (float)GetMouseX());
     }
     
     float dt = GetFrameTime() * 1000.f;
@@ -36,33 +36,32 @@ int main(void)
         .zoom = 1.f,
     };
 
-    
-    TouchScrollerConfig config = {
+    TouchScroller scroller = {
         .totalCells = 25,
-        .viewSize = WIDTH,
-        .cellSize = HEIGHT/4,
-        .gutterSize = WIDTH/2,
-        .dipToClosestCell = true
+        .viewSize = (float)WIDTH,
+        .cellSize = HEIGHT/4.f,
+        .gutterSize = WIDTH/2.f,
+        .dipToClosestCell = true,
+        .dipMaxSpeed = 10.f,
+        .dipSnappiness = 0.1f
     };
 
-    TouchScroller* scroller = TouchScroller_Init(config);
-    
     while (!WindowShouldClose())
     {
         BeginDrawing();
         {
             ClearBackground(GetColor(0x3b3b3b));
 
-            camera.target.x = ProcessTouchScrollerX(scroller, MOUSE_BUTTON_LEFT);
+            camera.target.x = ProcessTouchScrollerX(&scroller, MOUSE_BUTTON_LEFT);
             BeginMode2D(camera);
             {
                 // Draw each cell
-                for (int i = 0; i < config.totalCells; i++) {
-                    float cellWidth = config.cellSize;
-                    float cellHeight = HEIGHT;
+                for (int i = 0; i < scroller.totalCells; i++) {
+                    float cellWidth = scroller.cellSize;
+                    float cellHeight = (float)HEIGHT;
 
-                    Color cellColor = (i % 2 == 0) ? GetColor(0x7bb3d6) : GetColor(0xcfcfcf);
-                    DrawRectangle(i*cellWidth, 0, cellWidth, cellHeight, cellColor);
+                    Color cellColor = (i % 2 == 0) ? GetColor(0x7bb3d6ff) : GetColor(0xcfcfcfff);
+                    DrawRectangleRec((Rectangle){i*cellWidth, 0.f, cellWidth, cellHeight}, cellColor);
                 }
             }
             EndMode2D();
@@ -70,8 +69,6 @@ int main(void)
         EndDrawing();
     }
 
-    TouchScroller_Destroy(scroller);
-    
     CloseWindow();
 
     return 0;
