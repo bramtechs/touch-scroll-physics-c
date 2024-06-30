@@ -6,6 +6,10 @@ from JavaScript to C.
 
 See the original project for usage.
 
+## Showcase
+
+![](misc/showcase.gif)
+
 ## Quick start
 
 ```console
