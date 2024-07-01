@@ -75,8 +75,8 @@ void TouchScroller_Move(struct TouchScroller* ts, float value)
 {
     if (ts->interacting) {
         ts->inputDelta = value - ts->lastInput;
-        ts->inputDeltas[ts->inputDeltaIndex] = ts->inputDelta;
         ts->inputDeltaIndex = (ts->inputDeltaIndex+1) % INPUT_DELTA_MAX_HISTORY;
+        ts->inputDeltas[ts->inputDeltaIndex] = ts->inputDelta;
         ts->lastInput = value;
     }
 }
