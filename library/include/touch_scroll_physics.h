@@ -43,8 +43,8 @@ void TouchScroller_End(TouchScroller*, float xOrYPos);
 
 float TouchScroller_GetValue(TouchScroller*);
 
-#endif
-
 #ifdef __cplusplus
 }
+#endif
+
 #endif
