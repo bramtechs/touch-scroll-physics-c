@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <math.h>
-
+#include <assert.h>
 #include "touch_scroll_physics.h"
 
 static float Clamp(float a, float min, float max)
@@ -16,63 +16,69 @@ static float Clamp(float a, float min, float max)
 
 void TouchScroller_Update(TouchScroller* ts, float dt)
 {
+    assert(ts);
+
     // precalculate some values
     float fullSize = (float)fmax(ts->viewSize, ts->cellSize * ts->totalCells);
     float max = fullSize - ts->viewSize;
     float cellSizeHalf = ts->cellSize * 0.5f;
     float maxGutter = max + ts->gutterSize;
 
-    bool isBefore = ts->value < 0;
-    bool isAfter = ts->value > max;
+    bool isBefore = ts->offset < 0;
+    bool isAfter = ts->offset > max;
     bool isInside = !isBefore && !isAfter;
 
     // ease input at edges
     if(isBefore) {
         ts->momentum = 0;
         if (ts->inputDelta > 0) {
-            ts->inputDelta *= 1-(ts->value / -ts->gutterSize);
+            ts->inputDelta *= 1-(ts->offset / -ts->gutterSize);
         }
     } else if(isAfter) {
         ts->momentum = 0;
         if (ts->inputDelta < 0) {
-            ts->inputDelta *= (maxGutter - ts->value) / ts->gutterSize;
+            ts->inputDelta *= (maxGutter - ts->offset) / ts->gutterSize;
         }
     }
 
-    ts->value -= cellSizeHalf;
+    ts->offset -= cellSizeHalf;
     float dip = 0;
     if (!ts->interacting) {
         if (isInside && ts->dipToClosestCell) {
-            dip = (float)(fmod((fmod(ts->value, ts->cellSize) + ts->cellSize), ts->cellSize)) - cellSizeHalf; 
+            dip = (float)(fmod((fmod(ts->offset, ts->cellSize) + ts->cellSize), ts->cellSize)) - cellSizeHalf;
         } else if(isBefore) {
-            dip = ts->value + cellSizeHalf;
+            dip = ts->offset + cellSizeHalf;
         } else if(isAfter) {
-            dip = ts->value - max + cellSizeHalf;
+            dip = ts->offset - max + cellSizeHalf;
         }
         float dipStrength = (1.f-Clamp((float)(fabs(ts->momentum)) / ts->dipMaxSpeed, 0.f, 1.f)) * ts->dipSnappiness;
         dip *= dipStrength;
     }
     
-    ts->value -= ts->inputDelta;
+    ts->offset -= ts->inputDelta;
     ts->inputDelta = 0;
-    ts->value -= ts->momentum;
+    ts->offset -= ts->momentum;
     ts->momentum *= 0.9f;
-    ts->value -= dip;
+    ts->offset -= dip;
     
-    ts->value += cellSizeHalf;
-    ts->value = Clamp(ts->value, -ts->gutterSize, maxGutter);
+    ts->offset += cellSizeHalf;
+    ts->offset = Clamp(ts->offset, -ts->gutterSize, maxGutter);
 }
 
-void TouchScroller_Start(struct TouchScroller* ts, float value)
+void TouchScroller_Start(TouchScroller* ts, float value)
 {
+    assert(ts);
+
     ts->interacting = true;
     ts->momentum = 0;
     ts->inputDelta = 0;
     ts->lastInput = value;
 }
 
-void TouchScroller_Move(struct TouchScroller* ts, float value)
+void TouchScroller_Move(TouchScroller* ts, float value)
 {
+    assert(ts);
+
     if (ts->interacting) {
         ts->inputDelta = value - ts->lastInput;
         ts->inputDeltaIndex = (ts->inputDeltaIndex+1) % INPUT_DELTA_MAX_HISTORY;
@@ -81,8 +87,10 @@ void TouchScroller_Move(struct TouchScroller* ts, float value)
     }
 }
 
-void TouchScroller_End(struct TouchScroller* ts, float value)
-{   
+void TouchScroller_End(TouchScroller* ts, float value)
+{
+    assert(ts);
+
     if (ts->interacting) {
         ts->interacting = false;
 
@@ -100,28 +108,32 @@ void TouchScroller_End(struct TouchScroller* ts, float value)
     }
 }
 
-bool TouchScroller_IsVisible(TouchScroller* ts, float startXorYPos, float endXOrYPos)
+bool TouchScroller_IsVisible(TouchScroller* ts, float startOffset, float endOffset)
 {
-    if (startXorYPos > endXOrYPos) {
-        float temp = startXorYPos;
-        startXorYPos = endXOrYPos;
-        endXOrYPos = temp;
+    assert(ts);
+
+    if (startOffset > endOffset) {
+        float temp = startOffset;
+        startOffset = endOffset;
+        endOffset = temp;
     }
 
-    float viewStart = ts->value;
-    float viewEnd = ts->value + ts->viewSize;
+    float viewStart = ts->offset;
+    float viewEnd = ts->offset + ts->viewSize;
 
-    if (startXorYPos < viewEnd && startXorYPos > viewStart) {
+    if (startOffset < viewEnd && startOffset > viewStart) {
         return true;
     }
-    if (endXOrYPos < viewEnd && endXOrYPos > viewStart) {
+    if (endOffset < viewEnd && endOffset > viewStart) {
         return true;
     }
 
     return false;
 }
 
-float TouchScroller_GetValue(struct TouchScroller* ts)
+float TouchScroller_GetOffset(TouchScroller* ts)
 {
-    return ts->value;
+    assert(ts);
+
+    return ts->offset;
 }
