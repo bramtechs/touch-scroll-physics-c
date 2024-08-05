@@ -44,11 +44,11 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev
+          sudo apt-get install -y libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev tree
 
       - name: Configure CMake
         run: >
-          cmake -B ${{ steps.strings.outputs.build-output-dir }}
+          cmake -B ${{ steps.strings.outputs.build-output-dir }} -DCMAKE_INSTALL_PREFIX=install
           -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           -DTSCROLL_BUILD_DEMOS=ON
@@ -57,3 +57,9 @@ jobs:
 
       - name: Build
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --parallel --config ${{ matrix.build_type }}
+
+      - name: Install result on Linux
+        if: runner.os == 'Linux'
+        run: |
+          cmake --build ${{ steps.strings.outputs.build-output-dir }} --target install --parallel --config ${{ matrix.build_type }}
+          tree install
