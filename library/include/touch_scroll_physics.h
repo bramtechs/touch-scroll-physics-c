@@ -37,10 +37,10 @@ typedef struct TouchScroller
 
 void TouchScroller_Update(TouchScroller*, float dtInMillis);
 
-void TouchScroller_Start(TouchScroller*, float xOrYPos);
-void TouchScroller_Move(TouchScroller*, float xOrYPos);
-void TouchScroller_End(TouchScroller*, float xOrYPos);
-bool TouchScroller_IsVisible(TouchScroller*, float startXorYPos, float endXOrYPos);
+void TouchScroller_Start(TouchScroller*, float offset);
+void TouchScroller_Move(TouchScroller*, float offset);
+void TouchScroller_End(TouchScroller*, float offset);
+bool TouchScroller_IsVisible(TouchScroller*, float startOffset, float endOffset);
 
 float TouchScroller_GetOffset(TouchScroller*);
 #define TouchScroller_GetValue(X) TouchScroller_GetOffset(X)

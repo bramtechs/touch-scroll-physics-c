@@ -100,21 +100,21 @@ void TouchScroller_End(struct TouchScroller* ts, float value)
     }
 }
 
-bool TouchScroller_IsVisible(TouchScroller* ts, float startXorYPos, float endXOrYPos)
+bool TouchScroller_IsVisible(TouchScroller* ts, float startOffset, float endOffset)
 {
-    if (startXorYPos > endXOrYPos) {
-        float temp = startXorYPos;
-        startXorYPos = endXOrYPos;
-        endXOrYPos = temp;
+    if (startOffset > endOffset) {
+        float temp = startOffset;
+        startOffset = endOffset;
+        endOffset = temp;
     }
 
     float viewStart = ts->offset;
     float viewEnd = ts->offset + ts->viewSize;
 
-    if (startXorYPos < viewEnd && startXorYPos > viewStart) {
+    if (startOffset < viewEnd && startOffset > viewStart) {
         return true;
     }
-    if (endXOrYPos < viewEnd && endXOrYPos > viewStart) {
+    if (endOffset < viewEnd && endOffset > viewStart) {
         return true;
     }
 
