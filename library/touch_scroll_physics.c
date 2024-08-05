@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <math.h>
-
+#include <assert.h>
 #include "touch_scroll_physics.h"
 
 static float Clamp(float a, float min, float max)
@@ -16,6 +16,8 @@ static float Clamp(float a, float min, float max)
 
 void TouchScroller_Update(TouchScroller* ts, float dt)
 {
+    assert(ts);
+
     // precalculate some values
     float fullSize = (float)fmax(ts->viewSize, ts->cellSize * ts->totalCells);
     float max = fullSize - ts->viewSize;
@@ -63,16 +65,20 @@ void TouchScroller_Update(TouchScroller* ts, float dt)
     ts->offset = Clamp(ts->offset, -ts->gutterSize, maxGutter);
 }
 
-void TouchScroller_Start(struct TouchScroller* ts, float value)
+void TouchScroller_Start(TouchScroller* ts, float value)
 {
+    assert(ts);
+
     ts->interacting = true;
     ts->momentum = 0;
     ts->inputDelta = 0;
     ts->lastInput = value;
 }
 
-void TouchScroller_Move(struct TouchScroller* ts, float value)
+void TouchScroller_Move(TouchScroller* ts, float value)
 {
+    assert(ts);
+
     if (ts->interacting) {
         ts->inputDelta = value - ts->lastInput;
         ts->inputDeltaIndex = (ts->inputDeltaIndex+1) % INPUT_DELTA_MAX_HISTORY;
@@ -81,8 +87,10 @@ void TouchScroller_Move(struct TouchScroller* ts, float value)
     }
 }
 
-void TouchScroller_End(struct TouchScroller* ts, float value)
-{   
+void TouchScroller_End(TouchScroller* ts, float value)
+{
+    assert(ts);
+
     if (ts->interacting) {
         ts->interacting = false;
 
@@ -102,6 +110,8 @@ void TouchScroller_End(struct TouchScroller* ts, float value)
 
 bool TouchScroller_IsVisible(TouchScroller* ts, float startOffset, float endOffset)
 {
+    assert(ts);
+
     if (startOffset > endOffset) {
         float temp = startOffset;
         startOffset = endOffset;
@@ -123,5 +133,7 @@ bool TouchScroller_IsVisible(TouchScroller* ts, float startOffset, float endOffs
 
 float TouchScroller_GetOffset(TouchScroller* ts)
 {
+    assert(ts);
+
     return ts->offset;
 }
