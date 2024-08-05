@@ -15,7 +15,7 @@ pkgs.stdenv.mkDerivation (finalAttrs: {
   enableParallelBuilding = true;
 
   configurePhase = ''
-    cmake . -G Ninja
+    cmake . -G Ninja -DCMAKE_INSTALL_PREFIX=$out
   '';
 
   meta = with lib; {
