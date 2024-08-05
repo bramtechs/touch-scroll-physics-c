@@ -50,8 +50,9 @@ int main(void)
     {
         BeginDrawing();
         {
+            bool subjectIsVisible = false;
+            
             ClearBackground(GetColor(0x3b3b3b));
-
             camera.target.x = ProcessTouchScrollerX(&scroller, MOUSE_BUTTON_LEFT);
             BeginMode2D(camera);
             {
@@ -60,11 +61,20 @@ int main(void)
                     float cellWidth = scroller.cellSize;
                     float cellHeight = (float)HEIGHT;
 
-                    Color cellColor = (i % 2 == 0) ? GetColor(0x7bb3d6ff) : GetColor(0xcfcfcfff);
+                    Color cellColor;
+                    if (i == 10) {
+                        subjectIsVisible = TouchScroller_IsVisible(&scroller, i*cellWidth, (i+1)*cellWidth);
+                        cellColor = subjectIsVisible ? GREEN:RED;
+                    } else {
+                        cellColor = (i % 2 == 0) ? GetColor(0x7bb3d6ff) : GetColor(0xcfcfcfff);
+                    }
                     DrawRectangleRec((Rectangle){i*cellWidth, 0.f, cellWidth, cellHeight}, cellColor);
                 }
+
             }
             EndMode2D();
+
+            DrawText(TextFormat("Subject %s", subjectIsVisible ? "visible":"invisible"), 10, 10, 20, BLACK);
         }
         EndDrawing();
     }
