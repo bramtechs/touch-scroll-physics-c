@@ -22,45 +22,45 @@ void TouchScroller_Update(TouchScroller* ts, float dt)
     float cellSizeHalf = ts->cellSize * 0.5f;
     float maxGutter = max + ts->gutterSize;
 
-    bool isBefore = ts->value < 0;
-    bool isAfter = ts->value > max;
+    bool isBefore = ts->offset < 0;
+    bool isAfter = ts->offset > max;
     bool isInside = !isBefore && !isAfter;
 
     // ease input at edges
     if(isBefore) {
         ts->momentum = 0;
         if (ts->inputDelta > 0) {
-            ts->inputDelta *= 1-(ts->value / -ts->gutterSize);
+            ts->inputDelta *= 1-(ts->offset / -ts->gutterSize);
         }
     } else if(isAfter) {
         ts->momentum = 0;
         if (ts->inputDelta < 0) {
-            ts->inputDelta *= (maxGutter - ts->value) / ts->gutterSize;
+            ts->inputDelta *= (maxGutter - ts->offset) / ts->gutterSize;
         }
     }
 
-    ts->value -= cellSizeHalf;
+    ts->offset -= cellSizeHalf;
     float dip = 0;
     if (!ts->interacting) {
         if (isInside && ts->dipToClosestCell) {
-            dip = (float)(fmod((fmod(ts->value, ts->cellSize) + ts->cellSize), ts->cellSize)) - cellSizeHalf; 
+            dip = (float)(fmod((fmod(ts->offset, ts->cellSize) + ts->cellSize), ts->cellSize)) - cellSizeHalf;
         } else if(isBefore) {
-            dip = ts->value + cellSizeHalf;
+            dip = ts->offset + cellSizeHalf;
         } else if(isAfter) {
-            dip = ts->value - max + cellSizeHalf;
+            dip = ts->offset - max + cellSizeHalf;
         }
         float dipStrength = (1.f-Clamp((float)(fabs(ts->momentum)) / ts->dipMaxSpeed, 0.f, 1.f)) * ts->dipSnappiness;
         dip *= dipStrength;
     }
     
-    ts->value -= ts->inputDelta;
+    ts->offset -= ts->inputDelta;
     ts->inputDelta = 0;
-    ts->value -= ts->momentum;
+    ts->offset -= ts->momentum;
     ts->momentum *= 0.9f;
-    ts->value -= dip;
+    ts->offset -= dip;
     
-    ts->value += cellSizeHalf;
-    ts->value = Clamp(ts->value, -ts->gutterSize, maxGutter);
+    ts->offset += cellSizeHalf;
+    ts->offset = Clamp(ts->offset, -ts->gutterSize, maxGutter);
 }
 
 void TouchScroller_Start(struct TouchScroller* ts, float value)
@@ -108,8 +108,8 @@ bool TouchScroller_IsVisible(TouchScroller* ts, float startXorYPos, float endXOr
         endXOrYPos = temp;
     }
 
-    float viewStart = ts->value;
-    float viewEnd = ts->value + ts->viewSize;
+    float viewStart = ts->offset;
+    float viewEnd = ts->offset + ts->viewSize;
 
     if (startXorYPos < viewEnd && startXorYPos > viewStart) {
         return true;
@@ -121,7 +121,7 @@ bool TouchScroller_IsVisible(TouchScroller* ts, float startXorYPos, float endXOr
     return false;
 }
 
-float TouchScroller_GetValue(struct TouchScroller* ts)
+float TouchScroller_GetOffset(TouchScroller* ts)
 {
-    return ts->value;
+    return ts->offset;
 }

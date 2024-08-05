@@ -22,7 +22,7 @@ typedef struct TouchScroller
     // ---------------------
 
     // --- result ---
-    float value;
+    float offset;
     // --------------
     
     // private
@@ -42,7 +42,8 @@ void TouchScroller_Move(TouchScroller*, float xOrYPos);
 void TouchScroller_End(TouchScroller*, float xOrYPos);
 bool TouchScroller_IsVisible(TouchScroller*, float startXorYPos, float endXOrYPos);
 
-float TouchScroller_GetValue(TouchScroller*); // Get offset X or Y
+float TouchScroller_GetOffset(TouchScroller*);
+#define TouchScroller_GetValue(X) TouchScroller_GetOffset(X)
 
 #ifdef __cplusplus
 }
