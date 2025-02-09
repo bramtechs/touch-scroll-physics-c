@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.12)
 project(TouchScrollPhysics LANGUAGES C VERSION 0.0.1)
 set(CMAKE_C_STANDARD 99)
 set(INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/include)
