@@ -3,10 +3,17 @@ project(TouchScrollPhysics LANGUAGES C VERSION 0.0.1)
 set(CMAKE_C_STANDARD 99)
 set(INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/include)
 
-add_library(${PROJECT_NAME} STATIC
-  ./touch_scroll_physics.c
-  ./include/touch_scroll_physics.h
-)
+if (BUILD_SHARED_LIBS)
+    add_library(${PROJECT_NAME} SHARED
+      ./touch_scroll_physics.c
+      ./include/touch_scroll_physics.h
+    )
+else()
+    add_library(${PROJECT_NAME} STATIC
+      ./touch_scroll_physics.c
+      ./include/touch_scroll_physics.h
+    )
+endif()
 
 target_include_directories(${PROJECT_NAME}
   PUBLIC
