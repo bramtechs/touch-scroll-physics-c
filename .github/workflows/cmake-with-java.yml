@@ -105,6 +105,7 @@ jobs:
           name: java-artifacts-${{ matrix.os }}
           path: |
             install/**/*.jar
+            install/**/*-sources.jar
             install/**/*.so
             install/**/*.dll
             install/**/*.dylib
