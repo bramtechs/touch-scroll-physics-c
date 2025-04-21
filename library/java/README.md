@@ -147,12 +147,6 @@ dependencies {
 }
 ```
 
-For the sources, add this to your `settings.gradle`:
-
-```groovy
-sourceAttachmentPattern = '/path/to/touch-scroll-physics-lib-sources.jar'
-```
-
 ## Building with Debug Information
 
 The library is now configured to compile with full debug information (`-g` flag) and create a sources JAR. To build:
