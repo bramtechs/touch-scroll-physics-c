@@ -74,7 +74,8 @@ int main(void)
             }
             EndMode2D();
 
-            DrawText(TextFormat("Subject %s", subjectIsVisible ? "visible":"invisible"), 10, 10, 20, BLACK);
+            DrawFPS(10, 10);
+            DrawText(TextFormat("Subject %s", subjectIsVisible ? "visible":"invisible"), 10, 30, 20, BLACK);
         }
         EndDrawing();
     }

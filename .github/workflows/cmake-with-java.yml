@@ -1,4 +1,4 @@
-name: CMake on multiple platforms
+name: CMake with Java builds
 
 on:
   push:
@@ -13,22 +13,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
         build_type: [Release]
         c_compiler: [gcc, clang, cl]
         include:
-          - os: windows-latest
-            c_compiler: cl
           - os: ubuntu-latest
             c_compiler: gcc
-          - os: ubuntu-latest
+          - os: macos-latest
             c_compiler: clang
         exclude:
-          - os: windows-latest
-            c_compiler: gcc
-          - os: windows-latest
-            c_compiler: clang
           - os: ubuntu-latest
+            c_compiler: cl
+          - os: ubuntu-latest
+            c_compiler: clang
+          - os: macos-latest
+            c_compiler: gcc
+          - os: macos-latest
             c_compiler: cl
 
     steps:
@@ -46,6 +46,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libasound2-dev libx11-dev libxrandr-dev libxi-dev libgl1-mesa-dev libglu1-mesa-dev libxcursor-dev libxinerama-dev libwayland-dev libxkbcommon-dev tree
 
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: "11"
+          distribution: "temurin"
+
       - name: Cache CMake dependencies
         uses: actions/cache@v3
         with:
@@ -61,7 +67,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ steps.strings.outputs.build-output-dir }}
-          key: ${{ runner.os }}-build-${{ matrix.c_compiler }}-${{ matrix.build_type }}-${{ hashFiles('**/CMakeLists.txt', '**/*.c', '**/*.h') }}
+          key: ${{ runner.os }}-build-${{ matrix.c_compiler }}-${{ matrix.build_type }}-${{ hashFiles('**/CMakeLists.txt', '**/*.c', '**/*.h', '**/*.java') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ matrix.c_compiler }}-${{ matrix.build_type }}-
             ${{ runner.os }}-build-${{ matrix.c_compiler }}-
@@ -73,14 +79,32 @@ jobs:
           -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           -DTSCROLL_BUILD_DEMOS=ON
+          -DTSCROLL_BUILD_JAVA=ON
           -DTSCROLL_DOWNLOAD_RAYLIB=ON
           -S ${{ github.workspace }}
 
       - name: Build
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --parallel --config ${{ matrix.build_type }}
 
-      - name: Install result on Linux
-        if: runner.os == 'Linux'
+      - name: Install
+        run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --target install --parallel --config ${{ matrix.build_type }}
+
+      - name: List installed files
         run: |
-          cmake --build ${{ steps.strings.outputs.build-output-dir }} --target install --parallel --config ${{ matrix.build_type }}
-          tree install
+          if [ "$RUNNER_OS" == "Linux" ] || [ "$RUNNER_OS" == "macOS" ]; then
+            ls -la install
+            find install -type f | sort
+          else
+            dir install
+          fi
+        shell: bash
+
+      - name: Upload Java artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-artifacts-${{ matrix.os }}
+          path: |
+            install/**/*.jar
+            install/**/*.so
+            install/**/*.dll
+            install/**/*.dylib
