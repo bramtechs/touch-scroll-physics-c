@@ -3,6 +3,9 @@ project(TouchScrollPhysics LANGUAGES C VERSION 0.0.1)
 set(CMAKE_C_STANDARD 99)
 set(INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/include)
 
+# Option to build Java bindings
+option(TSCROLL_BUILD_JAVA "Build Java bindings" OFF)
+
 if (BUILD_SHARED_LIBS)
     add_library(${PROJECT_NAME} SHARED
       ./touch_scroll_physics.c
@@ -59,3 +62,13 @@ install(FILES
   "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
 )
+
+# Build Java bindings if requested
+if(TSCROLL_BUILD_JAVA)
+  # Find Java
+  find_package(Java REQUIRED)
+  include(UseJava)
+  
+  # Add Java subdirectory
+  add_subdirectory(java)
+endif()
