@@ -113,3 +113,59 @@ java -Djava.library.path=./library/java/build/libs -cp ./library/java/build/libs
 ```
 
 The demo shows a horizontally scrollable list of colored cells. Drag with your mouse to scroll.
+
+## Using in Other Projects
+
+When using the TouchScrollPhysics library in other projects, you can now properly see variable names and source code in your IDE by including both JARs:
+
+1. `touch-scroll-physics-lib.jar` - The main library JAR with compiled classes and debug information
+2. `touch-scroll-physics-lib-sources.jar` - The source JAR with original Java source files
+
+### Maven Example
+
+```xml
+<dependency>
+  <groupId>com.doomhowl</groupId>
+  <artifactId>touch-scroll-physics</artifactId>
+  <version>0.0.1</version>
+  <scope>system</scope>
+  <systemPath>/path/to/touch-scroll-physics-lib.jar</systemPath>
+</dependency>
+```
+
+Then manually attach the sources JAR in your IDE:
+
+- **IntelliJ IDEA**: Right-click on the JAR in the Project view → "Add as Library..." → Choose "Sources" for the sources JAR
+- **Eclipse**: Right-click on the JAR in the Package Explorer → "Properties" → "Java Source Attachment" → Select the sources JAR
+- **VS Code**: Add to your `.classpath` file or configure in your Java extension settings
+
+### Gradle Example
+
+```groovy
+dependencies {
+    implementation files('/path/to/touch-scroll-physics-lib.jar')
+}
+```
+
+For the sources, add this to your `settings.gradle`:
+
+```groovy
+sourceAttachmentPattern = '/path/to/touch-scroll-physics-lib-sources.jar'
+```
+
+## Building with Debug Information
+
+The library is now configured to compile with full debug information (`-g` flag) and create a sources JAR. To build:
+
+```bash
+# Build only the Java bindings
+make java
+
+# Or build everything including demos
+make build
+```
+
+The JARs will be located at:
+
+- `library/java/build/libs/touch-scroll-physics-lib.jar`
+- `library/java/build/libs/touch-scroll-physics-lib-sources.jar`

@@ -84,6 +84,153 @@ Java_com_doomhowl_touchscrollphysics_TouchScroller_nativeDispose(JNIEnv *,
                                                                  jobject,
                                                                  jlong);
 
+/*
+ * Class:     com_doomhowl_touchscrollphysics_TouchScroller
+ * Method:    nativeSetTotalCells
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL
+Java_com_doomhowl_touchscrollphysics_TouchScroller_nativeSetTotalCells(JNIEnv *,
+                                                                      jobject,
+                                                                      jlong,
+                                                                      jint);
+
+/*
+ * Class:     com_doomhowl_touchscrollphysics_TouchScroller
+ * Method:    nativeSetViewSize
+ * Signature: (JF)V
+ */
+JNIEXPORT void JNICALL
+Java_com_doomhowl_touchscrollphysics_TouchScroller_nativeSetViewSize(JNIEnv *,
+                                                                    jobject,
+                                                                    jlong,
+                                                                    jfloat);
+
+/*
+ * Class:     com_doomhowl_touchscrollphysics_TouchScroller
+ * Method:    nativeSetCellSize
+ * Signature: (JF)V
+ */
+JNIEXPORT void JNICALL
+Java_com_doomhowl_touchscrollphysics_TouchScroller_nativeSetCellSize(JNIEnv *,
+                                                                    jobject,
+                                                                    jlong,
+                                                                    jfloat);
+
+/*
+ * Class:     com_doomhowl_touchscrollphysics_TouchScroller
+ * Method:    nativeSetGutterSize
+ * Signature: (JF)V
+ */
+JNIEXPORT void JNICALL
+Java_com_doomhowl_touchscrollphysics_TouchScroller_nativeSetGutterSize(JNIEnv *,
+                                                                      jobject,
+                                                                      jlong,
+                                                                      jfloat);
+
+/*
+ * Class:     com_doomhowl_touchscrollphysics_TouchScroller
+ * Method:    nativeSetDipToClosestCell
+ * Signature: (JZ)V
+ */
+JNIEXPORT void JNICALL
+Java_com_doomhowl_touchscrollphysics_TouchScroller_nativeSetDipToClosestCell(JNIEnv *,
+                                                                           jobject,
+                                                                           jlong,
+                                                                           jboolean);
+
+/*
+ * Class:     com_doomhowl_touchscrollphysics_TouchScroller
+ * Method:    nativeSetDipMaxSpeed
+ * Signature: (JF)V
+ */
+JNIEXPORT void JNICALL
+Java_com_doomhowl_touchscrollphysics_TouchScroller_nativeSetDipMaxSpeed(JNIEnv *,
+                                                                       jobject,
+                                                                       jlong,
+                                                                       jfloat);
+
+/*
+ * Class:     com_doomhowl_touchscrollphysics_TouchScroller
+ * Method:    nativeSetDipSnappiness
+ * Signature: (JF)V
+ */
+JNIEXPORT void JNICALL
+Java_com_doomhowl_touchscrollphysics_TouchScroller_nativeSetDipSnappiness(JNIEnv *,
+                                                                         jobject,
+                                                                         jlong,
+                                                                         jfloat);
+
+/*
+ * Class:     com_doomhowl_touchscrollphysics_TouchScroller
+ * Method:    nativeGetTotalCells
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL
+Java_com_doomhowl_touchscrollphysics_TouchScroller_nativeGetTotalCells(JNIEnv *,
+                                                                      jobject,
+                                                                      jlong);
+
+/*
+ * Class:     com_doomhowl_touchscrollphysics_TouchScroller
+ * Method:    nativeGetViewSize
+ * Signature: (J)F
+ */
+JNIEXPORT jfloat JNICALL
+Java_com_doomhowl_touchscrollphysics_TouchScroller_nativeGetViewSize(JNIEnv *,
+                                                                    jobject,
+                                                                    jlong);
+
+/*
+ * Class:     com_doomhowl_touchscrollphysics_TouchScroller
+ * Method:    nativeGetCellSize
+ * Signature: (J)F
+ */
+JNIEXPORT jfloat JNICALL
+Java_com_doomhowl_touchscrollphysics_TouchScroller_nativeGetCellSize(JNIEnv *,
+                                                                    jobject,
+                                                                    jlong);
+
+/*
+ * Class:     com_doomhowl_touchscrollphysics_TouchScroller
+ * Method:    nativeGetGutterSize
+ * Signature: (J)F
+ */
+JNIEXPORT jfloat JNICALL
+Java_com_doomhowl_touchscrollphysics_TouchScroller_nativeGetGutterSize(JNIEnv *,
+                                                                      jobject,
+                                                                      jlong);
+
+/*
+ * Class:     com_doomhowl_touchscrollphysics_TouchScroller
+ * Method:    nativeGetDipToClosestCell
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL
+Java_com_doomhowl_touchscrollphysics_TouchScroller_nativeGetDipToClosestCell(JNIEnv *,
+                                                                           jobject,
+                                                                           jlong);
+
+/*
+ * Class:     com_doomhowl_touchscrollphysics_TouchScroller
+ * Method:    nativeGetDipMaxSpeed
+ * Signature: (J)F
+ */
+JNIEXPORT jfloat JNICALL
+Java_com_doomhowl_touchscrollphysics_TouchScroller_nativeGetDipMaxSpeed(JNIEnv *,
+                                                                       jobject,
+                                                                       jlong);
+
+/*
+ * Class:     com_doomhowl_touchscrollphysics_TouchScroller
+ * Method:    nativeGetDipSnappiness
+ * Signature: (J)F
+ */
+JNIEXPORT jfloat JNICALL
+Java_com_doomhowl_touchscrollphysics_TouchScroller_nativeGetDipSnappiness(JNIEnv *,
+                                                                         jobject,
+                                                                         jlong);
+
 #ifdef __cplusplus
 }
 #endif

@@ -42,14 +42,17 @@ file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build/classes/lib")
 add_custom_command(
   TARGET touch_scroll_physics_jni
   POST_BUILD
-  # Compile library classes
-  COMMAND ${Java_JAVAC_EXECUTABLE} -d "${CMAKE_CURRENT_SOURCE_DIR}/build/classes/lib" 
+  # Compile library classes with debug information
+  COMMAND ${Java_JAVAC_EXECUTABLE} -g -d "${CMAKE_CURRENT_SOURCE_DIR}/build/classes/lib" 
           "${CMAKE_CURRENT_SOURCE_DIR}/com/doomhowl/touchscrollphysics/TouchScroller.java"
           "${CMAKE_CURRENT_SOURCE_DIR}/com/doomhowl/touchscrollphysics/NativeLibLoader.java"
   # Create library JAR
   COMMAND ${Java_JAR_EXECUTABLE} cf "${CMAKE_CURRENT_SOURCE_DIR}/build/libs/touch-scroll-physics-lib.jar" 
           -C "${CMAKE_CURRENT_SOURCE_DIR}/build/classes/lib" .
-  COMMENT "Compiling Java sources and creating library JAR"
+  # Create source JAR
+  COMMAND ${Java_JAR_EXECUTABLE} cf "${CMAKE_CURRENT_SOURCE_DIR}/build/libs/touch-scroll-physics-lib-sources.jar" 
+          -C "${CMAKE_CURRENT_SOURCE_DIR}" com
+  COMMENT "Compiling Java sources and creating library JAR with debug information and sources"
   VERBATIM
 )
 
@@ -60,4 +63,5 @@ install(TARGETS touch_scroll_physics_jni
 
 install(FILES 
         "${CMAKE_CURRENT_SOURCE_DIR}/build/libs/touch-scroll-physics-lib.jar"
+        "${CMAKE_CURRENT_SOURCE_DIR}/build/libs/touch-scroll-physics-lib-sources.jar"
         DESTINATION ${CMAKE_INSTALL_LIBDIR}) 
