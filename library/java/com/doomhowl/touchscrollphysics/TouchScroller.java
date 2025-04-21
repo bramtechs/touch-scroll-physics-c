@@ -6,7 +6,7 @@ package com.doomhowl.touchscrollphysics;
  */
 public class TouchScroller implements AutoCloseable {
     static {
-        System.loadLibrary("touch_scroll_physics_jni");
+        NativeLibLoader.loadTouchScrollPhysicsLibrary();
     }
 
     // Pointer to the native TouchScroller instance

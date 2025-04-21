@@ -3,10 +3,12 @@ project(TouchScrollPhysicsRoot C)
 
 # Option to build Java bindings
 option(TSCROLL_BUILD_JAVA "Build Java bindings" OFF)
+# Option to build demos
+option(TSCROLL_BUILD_DEMOS "Build demos" OFF)
 
 add_subdirectory(library)
 
-if (DEFINED TSCROLL_BUILD_DEMOS)
+if (TSCROLL_BUILD_DEMOS)
   if (NOT MSVC)
     add_compile_options("-Wall" "-Wpedantic")
   endif()
