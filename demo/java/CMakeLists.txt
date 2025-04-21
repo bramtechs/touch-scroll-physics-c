@@ -5,11 +5,24 @@ project(TouchScrollPhysicsJavaDemo)
 find_package(Java 1.8 REQUIRED)
 include(UseJava)
 
+# Determine platform-specific library extension
+if(WIN32)
+  set(LIB_EXT "dll")
+elseif(APPLE)
+  set(LIB_EXT "dylib")
+elseif(UNIX)
+  set(LIB_EXT "so")
+else()
+  message(FATAL_ERROR "Unsupported platform")
+endif()
+
 # Create directories for output
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build/classes")
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build/libs")
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build/classes/native/macos/x86_64")
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build/classes/native/macos/arm64")
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build/classes/native/windows")
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build/classes/native/linux")
 
 # Add custom command to compile Java sources and create demo JAR
 add_custom_target(touch_scroll_physics_java_demo ALL
@@ -23,13 +36,13 @@ add_custom_target(touch_scroll_physics_java_demo ALL
   
   # Copy the native library to the appropriate location based on platform
   COMMAND ${CMAKE_COMMAND} -E copy 
-          "${CMAKE_SOURCE_DIR}/library/java/build/libs/libtouch_scroll_physics_jni.dylib"
-          "${CMAKE_CURRENT_SOURCE_DIR}/build/classes/native/macos/x86_64/"
+          "${CMAKE_SOURCE_DIR}/library/java/build/libs/libtouch_scroll_physics_jni.${LIB_EXT}"
+          "${CMAKE_CURRENT_SOURCE_DIR}/build/classes/native/${CMAKE_SYSTEM_NAME}/x86_64/"
   
   # On macOS, copy to arm64 directory too (if building on ARM)
   COMMAND ${CMAKE_COMMAND} -E copy 
-          "${CMAKE_SOURCE_DIR}/library/java/build/libs/libtouch_scroll_physics_jni.dylib"
-          "${CMAKE_CURRENT_SOURCE_DIR}/build/classes/native/macos/arm64/"
+          "${CMAKE_SOURCE_DIR}/library/java/build/libs/libtouch_scroll_physics_jni.${LIB_EXT}"
+          "${CMAKE_CURRENT_SOURCE_DIR}/build/classes/native/${CMAKE_SYSTEM_NAME}/arm64/"
   
   # Create the demo JAR with all classes and resources
   COMMAND ${Java_JAR_EXECUTABLE} cfe "${CMAKE_CURRENT_SOURCE_DIR}/build/libs/touch-scroll-physics-demo.jar"
