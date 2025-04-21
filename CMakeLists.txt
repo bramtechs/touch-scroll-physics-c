@@ -24,7 +24,7 @@ if (TSCROLL_BUILD_DEMOS)
     raylib
     GIT_REPOSITORY "https://github.com/raysan5/raylib.git"
     GIT_TAG "master"
-    GIT_PROGRESS TRUE
+    GIT_PROGRESS FALSE
     GIT_SHALLOW 1
   )
 

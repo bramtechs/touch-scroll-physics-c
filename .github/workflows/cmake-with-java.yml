@@ -57,6 +57,28 @@ jobs:
         with:
           java-version: "11"
           distribution: "temurin"
+          cache: gradle
+
+      - name: Cache CMake dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cmake
+            ${{ github.workspace }}/build/_deps
+          key: ${{ runner.os }}-cmake-${{ matrix.c_compiler }}-${{ hashFiles('**/CMakeLists.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-cmake-${{ matrix.c_compiler }}-
+            ${{ runner.os }}-cmake-
+
+      - name: Cache CMake build
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.strings.outputs.build-output-dir }}
+          key: ${{ runner.os }}-build-${{ matrix.c_compiler }}-${{ matrix.build_type }}-${{ hashFiles('**/CMakeLists.txt', '**/*.c', '**/*.h', '**/*.java') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ matrix.c_compiler }}-${{ matrix.build_type }}-
+            ${{ runner.os }}-build-${{ matrix.c_compiler }}-
+            ${{ runner.os }}-build-
 
       - name: Configure CMake
         run: >
